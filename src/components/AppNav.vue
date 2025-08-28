@@ -2,22 +2,26 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <!-- brand -->
+      <!-- Brand -->
       <a class="navbar-brand" href="#" @click.prevent="$router.push('/')">
         Men's Health
       </a>
 
-      <!-- toggle button (mobile) -->
+      <!-- Mobile toggler -->
       <button
         class="navbar-toggler"
         type="button"
         data-bs-toggle="collapse"
-        data-bs-target="#nav"
+        data-bs-target="#mainNav"
+        aria-controls="mainNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
       >
         <span class="navbar-toggler-icon"></span>
       </button>
 
-      <div id="nav" class="collapse navbar-collapse">
+      <!-- Collapsible content -->
+      <div id="mainNav" class="collapse navbar-collapse">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <RouterLink class="nav-link" to="/">Home</RouterLink>
@@ -25,13 +29,10 @@
           <li class="nav-item">
             <RouterLink class="nav-link" to="/about">About Us</RouterLink>
           </li>
+
+        <!-- Health Hub dropdown -->
           <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-            >
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               Health Hub
             </a>
             <ul class="dropdown-menu">
@@ -41,13 +42,10 @@
               <li><RouterLink class="dropdown-item" to="/health/resources">Resources</RouterLink></li>
             </ul>
           </li>
+
+        <!-- Tools dropdown -->
           <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-            >
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               Tools
             </a>
             <ul class="dropdown-menu">
@@ -55,13 +53,10 @@
               <li><RouterLink class="dropdown-item" to="/tools/forum">Forum & Stories</RouterLink></li>
             </ul>
           </li>
+
+        <!-- My Space dropdown -->
           <li class="nav-item dropdown">
-            <a
-              class="nav-link dropdown-toggle"
-              href="#"
-              role="button"
-              data-bs-toggle="dropdown"
-            >
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
               My Space
             </a>
             <ul class="dropdown-menu">
@@ -70,6 +65,7 @@
               <li><RouterLink class="dropdown-item" to="/my-space/settings">Settings</RouterLink></li>
             </ul>
           </li>
+
           <li class="nav-item">
             <RouterLink class="nav-link" to="/login">Login</RouterLink>
           </li>
@@ -85,3 +81,8 @@
 <script setup lang="ts">
 // no logic yet
 </script>
+
+<style scoped>
+/* Optional: tweak link spacing on desktop */
+.nav-link { padding-left: .5rem; padding-right: .5rem; }
+</style>
