@@ -35,7 +35,6 @@
                     v-model="password"
                     type="password"
                     class="form-control"
-                    placeholder="At least 8 characters"
                     @blur="validatePassword(true)"
                     @input="validatePassword(false)" />
             <div v-if="errors.password" class="text-danger small">{{ errors.password }}</div>
@@ -62,7 +61,7 @@
             <button class="btn btn-primary w-100">Create Account</button>
             </div>
 
-            <!-- User list (PrimeVue DataTable) -->
+            <!-- User list -->
             <div v-if="users.length" class="mt-4">
             <h5>Registered Users</h5>
             <DataTable :value="users" tableStyle="min-width: 20rem">
@@ -123,28 +122,37 @@ function sanitise(str = '') {
 
 // validators
 const validateName = (blur: boolean) => {
-    if (!required(name.value) || name.value.length < 3) {
+    if (!required(name.value) || name.value.length < 3) { // Check if the name is >= 3 characters
         if (blur) errors.value.name = 'Name must be at least 3 characters'
     } else {
         errors.value.name = null
     }
 }
-const validateEmail = (blur: boolean) => {
+const validateEmail = (blur: boolean) => { // The email format must be correct
     if (!isEmail(email.value)) {
         if (blur) errors.value.email = 'Invalid email format'
     } else {
         errors.value.email = null
     }
 }
-const validatePassword = (blur: boolean) => {
-    const minLength = 8
-    if (!minLen(password.value, minLength)) {
-        if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
-    } else {
-        errors.value.password = null
-    }
-    }
+const validatePassword = (blur: boolean) => { // Password conditions: 8 characters + uppercase and lowercase + special characters
+  const minLength = 8
+  const value = password.value
 
+  if (!minLen(value, minLength)) {
+    if (blur) errors.value.password = `Password must be at least ${minLength} characters long.`
+  } else if (!/[A-Z]/.test(value)) {
+    if (blur) errors.value.password = 'Password must include at least one uppercase letter.'
+  } else if (!/[a-z]/.test(value)) {
+    if (blur) errors.value.password = 'Password must include at least one lowercase letter.'
+  } else if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+    if (blur) errors.value.password = 'Password must include at least one special character.'
+  } else {
+    errors.value.password = null
+  }
+}
+
+//Submit
 function onSubmit() {
     validateName(true)
     validateEmail(true)
@@ -158,6 +166,7 @@ function onSubmit() {
         return
     }
 
+    // Prevent people from writing <script> or something like that in the name
     const user = {
         id: Date.now(),
         name: sanitise(name.value),

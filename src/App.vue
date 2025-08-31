@@ -1,7 +1,6 @@
-<!-- src/App.vue -->
 <template>
-  <AppNavbar />
-  <RouterView />
+    <AppNavbar />
+    <RouterView />
 </template>
 
 <script setup lang="ts">
@@ -9,5 +8,5 @@ import AppNavbar from './components/AppNav.vue'
 </script>
 
 <style>
-/* keep empty for now */
+
 </style>
