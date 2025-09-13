@@ -46,8 +46,10 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
 
 const router = useRouter()
+const auth = getAuth()
 
 // state
 const email = ref('')
@@ -90,19 +92,37 @@ const validatePassword = (blur: boolean) => {
   }
 }
 
-function onSubmit() {
+async function onSubmit() {
   validateEmail(true)
   validatePassword(true)
+  formError.value = ''
   if (errors.value.email || errors.value.password) return
 
-  const users = getUsers()
-  const user = users.find(u => u.email === email.value.trim())
-  if (!user || user.password !== password.value) {
-    formError.value = 'Invalid email or password'
-    return
-  }
+  try {
+    const { user } = await signInWithEmailAndPassword(
+      auth,
+      email.value.trim(),
+      password.value
+    )
 
-  setLoggedInUser({ id: user.id, name: user.name, email: user.email, pronoun: user.pronoun })
-  router.push('/') // go home
+    const summary = {
+      id: user.uid,
+      name: user.displayName || (user.email?.split('@')[0] ?? 'User'),
+      email: user.email,
+      pronoun: null,
+    }
+    localStorage.setItem('fit_user', JSON.stringify(summary))
+    window.dispatchEvent(new Event('fit-auth-changed'))
+
+    router.push('/') // Back to homepage
+  } catch (e: any) {
+    const code = e?.code || ''
+    // Invalid email or pass word
+    if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+      formError.value = 'Invalid email or password'
+    } else {
+      formError.value = `Sign in failed: ${code}`
+    }
+  }
 }
 </script>

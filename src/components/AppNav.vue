@@ -1,7 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-lg bg-light">
     <div class="container">
-
       <!-- Brand -->
       <a class="navbar-brand" href="#" @click.prevent="$router.push('/')">
         Men's Health
@@ -52,7 +51,12 @@
         <ul class="navbar-nav mx-lg-auto mb-2 mb-lg-0">
           <li class="nav-item"><RouterLink class="nav-link" to="/">Home</RouterLink></li>
           <li class="nav-item"><RouterLink class="nav-link" to="/about">About Us</RouterLink></li>
-
+          <li class="nav-item">
+            <router-link to="/FireLogin" class="nav-link" active-class="active">Firebase Login</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/FireRegister" class="nav-link" active-class="active">Firebase Register</router-link>
+          </li>
           <!-- Health Hub -->
           <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Health Hub</a>
@@ -84,7 +88,6 @@
           </li>
         </ul>
       </div>
-
     </div>
   </nav>
 </template>

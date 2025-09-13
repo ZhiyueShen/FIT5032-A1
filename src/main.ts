@@ -8,6 +8,7 @@ import router from './router'
 
 import PrimeVue from 'primevue/config'
 import Aura from '@primeuix/themes/aura'
+import './firebase/app'
 
 const app = createApp(App)
 app.use(router)

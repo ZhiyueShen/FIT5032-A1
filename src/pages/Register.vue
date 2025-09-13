@@ -80,6 +80,9 @@ import { ref } from 'vue'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
 
+import { useRouter } from 'vue-router'
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
+
 // form state
 const name = ref('')
 const email = ref('')
@@ -93,6 +96,9 @@ const errors = ref<{ name: string|null; email: string|null; password: string|nul
     email: null,
     password: null,
 })
+
+const router = useRouter()
+const auth = getAuth()
 
 // helpers
 const required = (v: any) => (v ?? '').toString().trim().length > 0
@@ -153,36 +159,48 @@ const validatePassword = (blur: boolean) => { // Password conditions: 8 characte
 }
 
 //Submit
-function onSubmit() {
-    validateName(true)
-    validateEmail(true)
-    validatePassword(true)
+async function onSubmit() {
+  //check
+  validateName(true)
+  validateEmail(true)
+  validatePassword(true)
+  formError.value = ''
+  if (errors.value.name || errors.value.email || errors.value.password) return
 
-    if (errors.value.name || errors.value.email || errors.value.password) return
+  try {
+    //Create account in Firebse
+    const { user } = await createUserWithEmailAndPassword(
+      auth,
+      email.value.trim(),
+      password.value
+    )
 
-    const exists = users.value.find(u => u.email === email.value)
-    if (exists) {
-        formError.value = 'Email already exists'
-        return
+    if (name.value?.trim()) {
+      await updateProfile(user, { displayName: name.value.trim() })
     }
 
-    // Prevent people from writing <script> or something like that in the name
-    const user = {
-        id: Date.now(),
-        name: sanitise(name.value),
-        email: email.value.trim(),
-        password: password.value,
-        pronoun: pronoun.value,
+    // keeping use localStorage to save the account information
+    const userSummary = {
+      id: user.uid,
+      name: user.displayName || name.value.trim() || (user.email?.split('@')[0] ?? 'User'),
+      email: user.email,
+      pronoun: pronoun?.value ?? null,
     }
+    localStorage.setItem('fit_user', JSON.stringify(userSummary))
+    window.dispatchEvent(new Event('fit-auth-changed'))
 
-    users.value.push(user)
-    saveUsers(users.value)
-
-    setLoggedInUser({ id: user.id, name: user.name, email: user.email, pronoun: user.pronoun })
-
+    // Clear
     name.value = ''
     email.value = ''
     password.value = ''
-    pronoun.value = ''
+    pronoun && (pronoun.value = '' as any)
+    router.push('/') 
+  } catch (e: any) {
+    const code = e?.code || ''
+    if (code === 'auth/email-already-in-use')        formError.value = 'This email has already been registered.'
+    else if (code === 'auth/weak-password')          formError.value = 'Password is too weak (min 6 chars).'
+    else if (code === 'auth/invalid-email')          formError.value = 'Invalid email format.'
+    else                                            formError.value = `Register failed: ${code}`
+  }
 }
 </script>
