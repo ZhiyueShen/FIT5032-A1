@@ -47,6 +47,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../firebase/app' 
 
 const router = useRouter()
 const auth = getAuth()
@@ -66,12 +68,9 @@ const errors = ref<{ email: string|null; password: string|null }>({
 const isEmail  = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
 const minLen   = (v: string, n: number) => (v ?? '').length >= n
 
-function getUsers(): any[] {
-  return JSON.parse(localStorage.getItem('fit_users') || '[]')
-}
 function setLoggedInUser(userSummary: any) {
   localStorage.setItem('fit_user', JSON.stringify(userSummary))
-  // notify navbar to refresh
+  // wait
   window.dispatchEvent(new Event('fit-auth-changed'))
 }
 
@@ -105,19 +104,27 @@ async function onSubmit() {
       password.value
     )
 
+    // 从 Firestore 读取 profile（users/{uid}）
+    let profile: any = null
+    try {
+      const snap = await getDoc(doc(db, 'users', user.uid))
+      profile = snap.exists() ? snap.data() : null
+    } catch (err) {
+      // Use auth 
+      console.warn('Fetch profile failed:', err)
+    }
+
     const summary = {
       id: user.uid,
-      name: user.displayName || (user.email?.split('@')[0] ?? 'User'),
-      email: user.email,
-      pronoun: null,
+      name: profile?.name ?? user.displayName ?? (user.email?.split('@')[0] ?? 'User'),
+      email: profile?.email ?? user.email,
+      pronoun: profile?.pronoun ?? null,
     }
-    localStorage.setItem('fit_user', JSON.stringify(summary))
-    window.dispatchEvent(new Event('fit-auth-changed'))
+    setLoggedInUser(summary)
 
     router.push('/') // Back to homepage
   } catch (e: any) {
     const code = e?.code || ''
-    // Invalid email or pass word
     if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
       formError.value = 'Invalid email or password'
     } else {

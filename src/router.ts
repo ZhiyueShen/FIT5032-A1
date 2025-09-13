@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage.vue'
 import HealthHub from './pages/HealthHub.vue'
 import Login from './pages/Login.vue'
 import Register from './pages/Register.vue'
+import Profile from './pages/Profile.vue'
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -13,6 +14,10 @@ const routes: RouteRecordRaw[] = [
   { path: '/register', name: 'register', component: Register },
   { path: '/FireLogin', name: 'FireLogin', component: () => import('./views/FirebaseSigninView.vue') },
   { path: '/FireRegister', name: 'FireRegister', component: () => import('./views/FirebaseRegisterView.vue') },
+  { path: '/FireRegister', name: 'FireRegister', component: () => import('./views/FirebaseRegisterView.vue') },
+  { path: '/profile', name: 'Profile', component: Profile, alias: ['/my-space/profile', '/settings'] },
+  { path: '/my-space/saved', name: 'Saved', component: () => import('./pages/Saved.vue') },
+
 ]
 
 export default createRouter({

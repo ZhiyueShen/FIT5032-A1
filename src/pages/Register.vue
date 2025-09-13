@@ -1,7 +1,6 @@
 <template>
     <div class="container py-4" style="max-width:560px">
         <h2 class="h4 mb-3">Register</h2>
-
         <form @submit.prevent="onSubmit" novalidate>
         <div class="row g-3">
             <!-- Name -->
@@ -83,6 +82,10 @@ import Column from 'primevue/column'
 import { useRouter } from 'vue-router'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
+// ★ 新增：引入 Firestore
+import { db } from '../firebase/app'                     // ← 路径：pages/ 下相对到 firebase/app
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+
 // form state
 const name = ref('')
 const email = ref('')
@@ -160,7 +163,7 @@ const validatePassword = (blur: boolean) => { // Password conditions: 8 characte
 
 //Submit
 async function onSubmit() {
-  //check
+  // check form
   validateName(true)
   validateEmail(true)
   validatePassword(true)
@@ -168,7 +171,7 @@ async function onSubmit() {
   if (errors.value.name || errors.value.email || errors.value.password) return
 
   try {
-    //Create account in Firebse
+    // Create an account
     const { user } = await createUserWithEmailAndPassword(
       auth,
       email.value.trim(),
@@ -179,7 +182,14 @@ async function onSubmit() {
       await updateProfile(user, { displayName: name.value.trim() })
     }
 
-    // keeping use localStorage to save the account information
+    await setDoc(doc(db, 'users', user.uid), {
+      name: user.displayName || name.value.trim() || (user.email?.split('@')[0] ?? 'User'),
+      email: user.email,
+      pronoun: pronoun?.value || null,
+      createdAt: serverTimestamp(),
+    })
+
+    // Origin logical
     const userSummary = {
       id: user.uid,
       name: user.displayName || name.value.trim() || (user.email?.split('@')[0] ?? 'User'),
@@ -194,13 +204,13 @@ async function onSubmit() {
     email.value = ''
     password.value = ''
     pronoun && (pronoun.value = '' as any)
-    router.push('/') 
+    router.push('/')
   } catch (e: any) {
     const code = e?.code || ''
-    if (code === 'auth/email-already-in-use')        formError.value = 'This email has already been registered.'
-    else if (code === 'auth/weak-password')          formError.value = 'Password is too weak (min 6 chars).'
-    else if (code === 'auth/invalid-email')          formError.value = 'Invalid email format.'
-    else                                            formError.value = `Register failed: ${code}`
+    if (code === 'auth/email-already-in-use')      formError.value = 'This email has already been registered.'
+    else if (code === 'auth/weak-password')        formError.value = 'Password is too weak (min 6 chars).'
+    else if (code === 'auth/invalid-email')        formError.value = 'Invalid email format.'
+    else                                           formError.value = `Register failed: ${code}`
   }
 }
 </script>
