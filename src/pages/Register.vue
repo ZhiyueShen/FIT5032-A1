@@ -82,8 +82,8 @@ import Column from 'primevue/column'
 import { useRouter } from 'vue-router'
 import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth'
 
-// ★ 新增：引入 Firestore
-import { db } from '../firebase/app'                     // ← 路径：pages/ 下相对到 firebase/app
+// Firestore
+import { db } from '../firebase/app'         
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 
 // form state

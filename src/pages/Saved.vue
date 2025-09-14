@@ -1,4 +1,5 @@
 <template>
+    <!-- Page wrapper -->
   <div class="container py-4" style="max-width: 900px">
     <h2 class="h4 mb-3">Saved</h2>
 
@@ -6,6 +7,7 @@
       Please login to view your saved content.
     </div>
 
+        <!-- Handle loading, empty and list states -->
     <div v-else>
       <div v-if="loading" class="text-muted">Loading...</div>
 
@@ -39,6 +41,7 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { collection, getDocs, orderBy, query, deleteDoc, doc } from 'firebase/firestore'
 import { db } from '../firebase/app'
 
+// What a saved item looks like in the UI
 type SavedItem = {
   id: string
   title: string
@@ -52,6 +55,7 @@ const loading = ref(true)
 const items = ref<SavedItem[]>([])
 const removingId = ref<string>('')
 
+//Helper
 function savedColRef(u: string) {
   return collection(db, 'users', u, 'saved')
 }
@@ -74,6 +78,7 @@ async function remove(id: string) {
   removingId.value = ''
 }
 
+/** Remember the uid and load data */
 onMounted(() => {
   onAuthStateChanged(getAuth(), (u) => {
     uid.value = u?.uid ?? null

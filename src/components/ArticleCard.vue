@@ -6,22 +6,37 @@
       <p class="card-text text-muted">{{ item.summary }}</p>
     </div>
 
-    <div class="card-footer bg-white d-flex justify-content-between align-items-center">
-      <a v-if="item.link" class="btn btn-sm btn-outline-secondary" :href="item.link" target="_blank" rel="noopener">
-        Learn more →
-      </a>
-      <span v-else class="text-muted small">Demo content</span>
+    <!-- Rating -->
+    <div class="card-footer bg-white py-2 rating-footer">
+        <div class="d-flex justify-content-between align-items-center">
+            <small class="text-muted me-2">Rate</small>
+            <RatingStars :item-id="item.id" />
+        </div>
+        </div>
 
-      <button
-        class="btn btn-sm"
-        :class="isSaved ? 'btn-danger' : 'btn-outline-danger'"
-        :disabled="toggling"
-        @click="toggleSave"
-        :title="isSaved ? 'Unsave' : 'Save'"
-      >
-        <span v-if="isSaved">♥</span>
-        <span v-else>♡</span>
-      </button>
+        <!-- Learn more and Saving -->
+        <div class="card-footer bg-white d-flex justify-content-between align-items-center action-footer">
+        <a
+            v-if="item.link"
+            class="btn btn-sm btn-outline-secondary"
+            :href="item.link"
+            target="_blank"
+            rel="noopener"
+        >
+            Learn more →
+        </a>
+        <span v-else class="text-muted small">Demo content</span>
+
+        <button
+            class="btn btn-sm"
+            :class="isSaved ? 'btn-danger' : 'btn-outline-danger'"
+            :disabled="toggling"
+            @click="toggleSave"
+            :title="isSaved ? 'Unsave' : 'Save'"
+        >
+            <span v-if="isSaved">♥</span>
+            <span v-else>♡</span>
+        </button>
     </div>
   </div>
 </template>
@@ -31,6 +46,7 @@ import { ref, onMounted, watch } from 'vue'
 import { getAuth } from 'firebase/auth'
 import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '../firebase/app'
+import RatingStars from './RatingStars.vue'
 
 type Article = {
   id: string
@@ -83,10 +99,13 @@ async function toggleSave() {
 }
 
 onMounted(checkSaved)
-// 当登录状态变化时（你的 navbar 会触发 fit-auth-changed），同步刷新收藏状态
+// Refresh your saving situation
 window.addEventListener('fit-auth-changed', checkSaved)
 </script>
 
 <style scoped>
 .article-card img { object-fit: cover; height: 180px; }
+.rating-footer { border-top: 1px solid #eee; }
+.action-footer { border-top: 0; padding-top: .25rem; }
+.rating-footer :deep(.rating-stars) { flex-wrap: nowrap; } /* Minimum width */ 
 </style>

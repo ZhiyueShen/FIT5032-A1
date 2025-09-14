@@ -2,10 +2,10 @@
   <div class="container py-4" style="max-width:640px">
     <h2 class="h4 mb-3">My Profile</h2>
 
-    <!-- 加载中 -->
+    <!-- loading -->
     <div v-if="loading" class="text-muted">Loading...</div>
 
-    <!-- 表单 -->
+    <!-- form -->
     <form v-if="uid && !loading" @submit.prevent="save" novalidate>
       <div class="row g-3">
         <!-- Name -->
@@ -23,14 +23,14 @@
           <div v-if="errors.name" class="text-danger small">{{ errors.name }}</div>
         </div>
 
-        <!-- Email（只读，来自 Auth） -->
+        <!-- Email（Read only） -->
         <div class="col-12">
           <label class="form-label" for="email">Email</label>
           <input id="email" v-model="email" class="form-control" type="email" readonly />
           <div class="form-text">Email comes from Firebase Auth and is read-only.</div>
         </div>
 
-        <!-- Pronoun（下拉选项） -->
+        <!-- Pronoun -->
         <div class="col-12">
           <label class="form-label" for="pronoun">Pronoun</label>
           <select id="pronoun" v-model="pronoun" class="form-select">
@@ -62,21 +62,21 @@
 import { ref, onMounted } from 'vue'
 import { updateProfile } from 'firebase/auth'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { auth, db } from '../firebase/app' // 用你项目里导出的实例
+import { auth, db } from '../firebase/app' // Using Entity form my form
 
-// UI 状态
+// UI Status
 const loading   = ref(true)
 const saving    = ref(false)
 const formOk    = ref('')
 const formError = ref('')
 
-// 表单状态
+// Form Status
 const uid     = ref<string | null>(null)
 const name    = ref('')
 const email   = ref('')
 const pronoun = ref('prefer not to say')
 
-// 校验
+// Checking
 const errors   = ref<{ name: string | null }>({ name: null })
 const validateName = (blur: boolean) => {
   if (name.value.trim().length < 3) {
@@ -86,7 +86,7 @@ const validateName = (blur: boolean) => {
   }
 }
 
-// 代词白名单 + 规范化
+// Formation
 const pronounOptions = ['he/him', 'she/her', 'they/them', 'prefer not to say']
 function normalizePronoun(v?: string | null) {
   const x = (v ?? '').toString().toLowerCase().trim()
@@ -94,14 +94,14 @@ function normalizePronoun(v?: string | null) {
   return found ?? 'prefer not to say'
 }
 
-// 用用户 / Firestore 数据填表
+// Use user's / Firestore data to fill the form
 function fillForm(data: any) {
   name.value    = (data?.name  ?? auth.currentUser?.displayName ?? '')
   email.value   = (data?.email ?? auth.currentUser?.email ?? '')
   pronoun.value = normalizePronoun(data?.pronoun)
 }
 
-// 重置（重新取 Firestore）
+// Reset
 async function resetForm() {
   formOk.value = ''
   formError.value = ''
@@ -110,7 +110,7 @@ async function resetForm() {
   fillForm(snap.exists() ? snap.data() : null)
 }
 
-// 保存
+// saving
 async function save() {
   validateName(true)
   formOk.value = ''
@@ -124,13 +124,13 @@ async function save() {
   try {
     saving.value = true
 
-    // 如有变化，顺带更新 Auth.displayName
+    // refresh Auth.displayName
     const newName = name.value.trim()
     if (auth.currentUser && newName && newName !== (auth.currentUser.displayName ?? '')) {
       await updateProfile(auth.currentUser, { displayName: newName })
     }
 
-    // 合并写入 Firestore
+    // Combine and write into Firestore
     const payload = {
       name: newName,
       email: auth.currentUser?.email ?? email.value ?? null,
@@ -139,7 +139,7 @@ async function save() {
     }
     await setDoc(doc(db, 'users', uid.value), payload, { merge: true })
 
-    // 同步本地 navbar 用信息
+    // synchronous navbar by info
     localStorage.setItem('fit_user', JSON.stringify({
       id: uid.value, name: payload.name, email: payload.email, pronoun: payload.pronoun,
     }))
@@ -153,7 +153,6 @@ async function save() {
   }
 }
 
-// 监听登录状态并拉取 Firestore
 onMounted(() => {
   const unsub = auth.onAuthStateChanged(async (u) => {
     loading.value = true
@@ -170,7 +169,7 @@ onMounted(() => {
     }
 
     uid.value = u.uid
-    fillForm(null) // 先用 Auth 预填
+    fillForm(null) // use Auth to pre fill
 
     try {
       const snap = await getDoc(doc(db, 'users', u.uid))
