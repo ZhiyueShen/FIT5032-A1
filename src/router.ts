@@ -12,9 +12,6 @@ const routes: RouteRecordRaw[] = [
   { path: '/health', name: 'health', component: HealthHub },
   { path: '/login', name: 'login', component: Login },
   { path: '/register', name: 'register', component: Register },
-  { path: '/FireLogin', name: 'FireLogin', component: () => import('./views/FirebaseSigninView.vue') },
-  { path: '/FireRegister', name: 'FireRegister', component: () => import('./views/FirebaseRegisterView.vue') },
-  { path: '/FireRegister', name: 'FireRegister', component: () => import('./views/FirebaseRegisterView.vue') },
   { path: '/profile', name: 'Profile', component: Profile, alias: ['/my-space/profile', '/settings'] },
   { path: '/my-space/saved', name: 'Saved', component: () => import('./pages/Saved.vue') },
 

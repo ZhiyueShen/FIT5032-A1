@@ -4,8 +4,8 @@ import ArticleCard from '../components/ArticleCard.vue'
 const demoArticles = [
   {
     id: 'about-movember',
-    title: "What's Movember all about?",
-    summary: 'Movember is the leading charity changing the face of men’s health...',
+    title: "What's Men's Health for?",
+    summary: 'Men is the leading charity changing the face of men’s health...',
     image: 'https://picsum.photos/seed/pic1/640/360',
     link: '#'
   },
@@ -20,7 +20,7 @@ const demoArticles = [
     id: 'five-things',
     title: '5 things every man should know',
     summary: 'Five things that all guys can do to live happier, healthier, longer lives.',
-    image: 'https://picsum.photos/seed/pic3/640/360',
+    image: 'https://picsum.photos/seed/pic5/640/360',
     link: '#'
   },
   {
