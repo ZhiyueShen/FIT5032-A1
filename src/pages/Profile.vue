@@ -170,7 +170,6 @@ onMounted(() => {
 
     uid.value = u.uid
     fillForm(null) // use Auth to pre fill
-
     try {
       const snap = await getDoc(doc(db, 'users', u.uid))
       if (snap.exists()) fillForm(snap.data())

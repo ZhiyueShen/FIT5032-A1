@@ -113,21 +113,6 @@ const users = ref<any[]>(getUsers())
 function getUsers(): any[] {
     return JSON.parse(localStorage.getItem('fit_users') || '[]')
 }
-function saveUsers(arr: any[]) {
-    localStorage.setItem('fit_users', JSON.stringify(arr))
-}
-function setLoggedInUser(userSummary: any) {
-    localStorage.setItem('fit_user', JSON.stringify(userSummary))
-}
-
-// XSS guard for name only
-function sanitise(str = '') {
-    return str
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#39;')
-}
 
 // validators
 const validateName = (blur: boolean) => {
@@ -188,6 +173,20 @@ async function onSubmit() {
       pronoun: pronoun?.value || null,
       createdAt: serverTimestamp(),
     })
+    //send email
+    try {
+      await fetch("https://us-central1-fit5032-a1-dd6a2.cloudfunctions.net/sendUserWelcomeEmail", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          to: user.email,
+          name: user.displayName || name.value.trim() || "User",
+        }),
+      });
+      console.log("Welcome email sent");
+    } catch (mailErr) {
+      console.error("Failed to send welcome email:", mailErr);
+    }
 
     // Origin logical
     const userSummary = {
@@ -212,5 +211,8 @@ async function onSubmit() {
     else if (code === 'auth/invalid-email')        formError.value = 'Invalid email format.'
     else                                           formError.value = `Register failed: ${code}`
   }
+
+
 }
+
 </script>

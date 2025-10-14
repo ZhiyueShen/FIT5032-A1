@@ -104,7 +104,7 @@ async function onSubmit() {
       password.value
     )
 
-    // 从 Firestore 读取 profile（users/{uid}）
+    // From Firestore read profile（users/{uid}）
     let profile: any = null
     try {
       const snap = await getDoc(doc(db, 'users', user.uid))

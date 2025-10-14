@@ -12,8 +12,7 @@
             <small class="text-muted me-2">Rate</small>
             <RatingStars :item-id="item.id" />
         </div>
-        </div>
-
+    </div>
         <!-- Learn more and Saving -->
         <div class="card-footer bg-white d-flex justify-content-between align-items-center action-footer">
         <a
