@@ -59,7 +59,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { updateProfile } from 'firebase/auth'
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { auth, db } from '../firebase/app' // Using Entity form my form
@@ -154,30 +154,35 @@ async function save() {
 }
 
 onMounted(() => {
-  const unsub = auth.onAuthStateChanged(async (u) => {
-    loading.value = true
-    formOk.value = ''
-    formError.value = ''
+    const unsub = auth.onAuthStateChanged(async (u) => {
+      loading.value = true
+      formOk.value = ''
+      formError.value = ''
 
-    if (!u) {
-      uid.value = null
-      name.value = ''
-      email.value = ''
-      pronoun.value = 'prefer not to say'
-      loading.value = false
-      return
-    }
+      if (!u) {
+        uid.value = null
+        name.value = ''
+        email.value = ''
+        pronoun.value = 'prefer not to say'
+        loading.value = false
+        return
+      }
 
-    uid.value = u.uid
-    fillForm(null) // use Auth to pre fill
-    try {
-      const snap = await getDoc(doc(db, 'users', u.uid))
-      if (snap.exists()) fillForm(snap.data())
-    } catch (e) {
-      console.warn('Fetch profile failed', e)
-    } finally {
-      loading.value = false
-    }
+      uid.value = u.uid
+      fillForm(null) // use Auth to pre fill
+      try {
+        const snap = await getDoc(doc(db, 'users', u.uid))
+        if (snap.exists()) fillForm(snap.data())
+      } catch (e) {
+        console.warn('Fetch profile failed', e)
+      } finally {
+        loading.value = false
+      }
+    })
+
+    // Clean up listeners when components are unmounted to prevent memory leaks and TypeScript warnings
+    onUnmounted(() => {
+      unsub()
+    })
   })
-})
 </script>
