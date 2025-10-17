@@ -13,6 +13,17 @@ export default defineConfig({
     dedupe: ['vue', 'firebase']
   },
   optimizeDeps: {
-    include: ['firebase/app', 'firebase/auth', 'firebase/firestore']
+    include: ['firebase/app', 'firebase/auth', 'firebase/firestore'],
+    esbuildOptions: {
+      target: 'esnext'
+    }
+  },
+  build: {
+    rollupOptions: {
+      external: []
+    },
+    commonjsOptions: {
+      transformMixedEsModules: true
+    }
   }
 })
