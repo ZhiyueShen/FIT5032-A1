@@ -20,7 +20,7 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
-      external: []
+      external: ['firebase', 'firebase/auth', 'firebase/app', 'firebase/firestore'] // ✅ 加这一行
     },
     commonjsOptions: {
       transformMixedEsModules: true
