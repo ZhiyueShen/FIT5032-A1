@@ -23,15 +23,14 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _from, next) => {
   const userStr = localStorage.getItem('fit_user')
   const user = userStr ? JSON.parse(userStr) : null
 
-  // 访问 /admin 时校验权限
   if (to.meta.requiresAdmin) {
     if (!user || user.role !== 'admin') {
       alert('Access denied: admin only')
-      return next('/') // 回到主页
+      return next('/') // go back
     }
   }
   next()
