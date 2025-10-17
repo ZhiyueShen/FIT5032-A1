@@ -85,6 +85,7 @@ import { getAuth, createUserWithEmailAndPassword, updateProfile } from 'firebase
 // Firestore
 import { db } from '../firebase/app'         
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
+import { getDoc } from "firebase/firestore";
 
 // form state
 const name = ref('')
@@ -168,11 +169,12 @@ async function onSubmit() {
     }
 
     await setDoc(doc(db, 'users', user.uid), {
+      role: 'user',
       name: user.displayName || name.value.trim() || (user.email?.split('@')[0] ?? 'User'),
       email: user.email,
       pronoun: pronoun?.value || null,
       createdAt: serverTimestamp(),
-    })
+    }, { merge: true })
     //send email
     try {
       await fetch("https://us-central1-fit5032-a1-dd6a2.cloudfunctions.net/sendUserWelcomeEmail", {
@@ -189,10 +191,13 @@ async function onSubmit() {
     }
 
     // Origin logical
+    const userDoc = await getDoc(doc(db, 'users', user.uid));
+    const userData = userDoc.data();
     const userSummary = {
       id: user.uid,
       name: user.displayName || name.value.trim() || (user.email?.split('@')[0] ?? 'User'),
       email: user.email,
+      role: userData?.role || 'user',
       pronoun: pronoun?.value ?? null,
     }
     localStorage.setItem('fit_user', JSON.stringify(userSummary))
@@ -211,8 +216,6 @@ async function onSubmit() {
     else if (code === 'auth/invalid-email')        formError.value = 'Invalid email format.'
     else                                           formError.value = `Register failed: ${code}`
   }
-
-
 }
 
 </script>

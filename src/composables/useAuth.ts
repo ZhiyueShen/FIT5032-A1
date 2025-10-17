@@ -1,5 +1,5 @@
 import { ref, onMounted } from 'vue'
-import { auth, db } from '@/firebase/app'
+import { auth, db } from '../firebase/app'
 import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,

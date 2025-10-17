@@ -47,12 +47,17 @@ import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firest
 import { db } from '../firebase/app'
 import RatingStars from './RatingStars.vue'
 
-type Article = {
-  id: string
-  title: string
-  summary: string
-  image?: string
-  link?: string
+interface Article {
+  id: string;
+  title: string;
+  summary?: string;
+  image?: string;
+  link?: string;
+  category?: string;
+  author?: string;
+  publish_date?: string;
+  views?: number;
+  visible?: boolean;
 }
 
 const props = defineProps<{ item: Article }>()
