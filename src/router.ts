@@ -6,7 +6,11 @@ import HealthHub from './pages/HealthHub.vue'
 import Login from './pages/Login.vue'
 import Register from './pages/Register.vue'
 import Profile from './pages/Profile.vue'
+import FitnessTips from './pages/HealthHub.vue'
 import AdminPage from './views/AdminPage.vue'
+
+import PhysicalHealth from './pages/PhysicalHealth.vue'
+
 
 const routes: RouteRecordRaw[] = [
   { path: '/', name: 'home', component: HomePage },
@@ -15,7 +19,14 @@ const routes: RouteRecordRaw[] = [
   { path: '/register', name: 'register', component: Register },
   { path: '/profile', name: 'Profile', component: Profile, alias: ['/my-space/profile', '/settings'] },
   { path: '/my-space/saved', name: 'Saved', component: () => import('./pages/Saved.vue') },
-  { path: '/admin', name: 'admin', component: AdminPage, meta: { requiresAdmin: true } }
+  { path: '/admin', name: 'admin', component: AdminPage, meta: { requiresAdmin: true } },
+  {
+    path: '/FitnessTips',
+    name: 'FitnessTips',
+    component: FitnessTips,
+  },
+  { path: '/health/physical', name: 'PhysicalHealth', component: PhysicalHealth },
+  
 ]
 
 const router = createRouter({
@@ -36,7 +47,4 @@ router.beforeEach((to, _from, next) => {
   next()
 })
 
-export default createRouter({
-  history: createWebHistory(),
-  routes,
-})
+export default router

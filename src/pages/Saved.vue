@@ -43,11 +43,13 @@ import { db } from '../firebase/app'
 
 // What a saved item looks like in the UI
 type SavedItem = {
-  id: string
-  title: string
-  summary?: string
-  image?: string|null
-  link?: string|null
+  id: string;
+  title: string;
+  summary?: string;
+  image?: string | null;
+  link?: string | null;
+  author?: string;
+  category?: string;
 }
 
 const uid = ref<string | null>(null)
@@ -61,13 +63,27 @@ function savedColRef(u: string) {
 }
 
 async function load() {
-  if (!uid.value) return
-  loading.value = true
-  items.value = []
-  const q = query(savedColRef(uid.value), orderBy('createdAt','desc'))
-  const snap = await getDocs(q)
-  snap.forEach(d => items.value.push({ id: d.id, ...(d.data() as any) }))
-  loading.value = false
+  if (!uid.value) return;
+  loading.value = true;
+  items.value = [];
+  const q = query(savedColRef(uid.value), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  snap.forEach((d) => {
+    const data = d.data() as any;
+    if (data.source === "articles" || !data.source) {
+      items.value.push({
+        id: d.id,
+        title: data.title,
+        summary: data.summary || "",
+        image: data.image || "",
+        link: data.link || "",
+        author: data.author || "",
+        category: data.category || "",
+      });
+    }
+  });
+
+  loading.value = false;
 }
 
 async function remove(id: string) {

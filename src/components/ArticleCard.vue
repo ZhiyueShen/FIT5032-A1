@@ -89,11 +89,14 @@ async function toggleSave() {
       isSaved.value = false
     } else {
       await setDoc(ref, {
-        title: props.item.title,
-        summary: props.item.summary,
-        link: props.item.link ?? null,
-        image: props.item.image ?? null,
+        title: props.item.title || "",
+        summary: props.item.summary ?? "",
+        link: props.item.link || "",
+        image: props.item.image || "",
+        author: props.item.author || "",
+        category: props.item.category || "",
         createdAt: serverTimestamp(),
+        source: "articles",
       }, { merge: true })
       isSaved.value = true
     }

@@ -109,6 +109,7 @@ async function onSubmit() {
     try {
       const snap = await getDoc(doc(db, 'users', user.uid))
       profile = snap.exists() ? snap.data() : null
+      console.log("🔥 Firestore profile:", profile)
     } catch (err) {
       // Use auth 
       console.warn('Fetch profile failed:', err)
@@ -119,6 +120,7 @@ async function onSubmit() {
       name: profile?.name ?? user.displayName ?? (user.email?.split('@')[0] ?? 'User'),
       email: profile?.email ?? user.email,
       pronoun: profile?.pronoun ?? null,
+      role: profile?.role ?? 'user', 
     }
     setLoggedInUser(summary)
 

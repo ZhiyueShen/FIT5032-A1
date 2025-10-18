@@ -76,8 +76,8 @@ const avg = ref(0)
 const count = ref(-1) // -1 is still loading
 const saving = ref(false)
 
-function ratingDoc(uid: string) {// items
-  return doc(db, 'items', props.itemId, 'ratings', uid)
+function ratingDoc(uid: string) {// find articles
+  return doc(db, 'articles', props.itemId, 'ratings', uid)
 }
 
 async function loadMy() {
@@ -88,7 +88,7 @@ async function loadMy() {
 }
 
 async function loadAvg() {
-  const col = collection(db, 'items', props.itemId, 'ratings')
+  const col = collection(db, 'articles', props.itemId, 'ratings')
   const snap = await getDocs(col)
   let sum = 0, c = 0
   snap.forEach(d => {
@@ -104,7 +104,11 @@ async function rate(n: number) {
   if (!user) { alert('Please login to rate.'); return }
   saving.value = true
   try {
-    await setDoc(ratingDoc(user.uid), { value: n, updatedAt: serverTimestamp() }, { merge: true })
+    await setDoc(ratingDoc(user.uid), {
+      value: n,
+      updatedAt: serverTimestamp()
+    }, { merge: true })
+    await new Promise(resolve => setTimeout(resolve, 300))
     await Promise.all([loadMy(), loadAvg()])
   } finally {
     saving.value = false

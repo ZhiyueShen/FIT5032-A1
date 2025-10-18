@@ -64,6 +64,7 @@
               <li><RouterLink class="dropdown-item" to="/health/mental">Mental Wellbeing</RouterLink></li>
               <li><RouterLink class="dropdown-item" to="/health/lgbtq">LGBTQ+ Topics</RouterLink></li>
               <li><RouterLink class="dropdown-item" to="/health/resources">Resources</RouterLink></li>
+              <li><router-link to="/FitnessTips" class="dropdown-item">Fitness Tips</router-link></li>
             </ul>
           </li>
 

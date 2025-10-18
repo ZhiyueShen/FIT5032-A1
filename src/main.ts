@@ -12,6 +12,7 @@ import './firebase/app'
 
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import "mapbox-gl/dist/mapbox-gl.css";
 
 const app = createApp(App)
 app.use(router)
