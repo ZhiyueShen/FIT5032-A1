@@ -24,7 +24,7 @@
     <div v-if="results.length" class="mt-3" style="max-width: 680px">
       <h5 class="mb-2">Nearby hospitals (sorted by distance)</h5>
       <ul class="list-group">
-        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(r, i) in results" :key="r.id">
+        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(r) in results" :key="r.id">
           <div>
             <div>
                 <strong>{{ r.tags?.name || "Unnamed Hospital" }}</strong>
