@@ -1,44 +1,75 @@
 <template>
-  <div class="card h-100 shadow-sm article-card">
-    <img v-if="item.image" :src="item.image" class="card-img-top" :alt="item.title" />
+  <article class="card h-100 shadow-sm article-card" role="article" aria-labelledby="card-title">
+    <figure class="m-0">
+      <img
+        v-if="item.image"
+        :src="item.image"
+        class="card-img-top"
+        :alt="`Thumbnail image for ${item.title}`"
+        :aria-describedby="`desc-${item.id}`"
+      />
+    </figure>
+
+    <!-- article -->
     <div class="card-body">
-      <h5 class="card-title">{{ item.title }}</h5>
-      <p class="card-text text-muted">{{ item.summary }}</p>
+      <h2 :id="`card-title-${item.id}`" class="card-title h5">
+        {{ item.title }}
+      </h2>
+      <p :id="`desc-${item.id}`" class="card-text text-muted">
+        {{ item.summary }}
+      </p>
     </div>
 
-    <!-- Rating -->
-    <div class="card-footer bg-white py-2 rating-footer">
-        <div class="d-flex justify-content-between align-items-center">
-            <small class="text-muted me-2">Rate</small>
-            <RatingStars :item-id="item.id" />
-        </div>
-    </div>
-        <!-- Learn more and Saving -->
-        <div class="card-footer bg-white d-flex justify-content-between align-items-center action-footer">
-        <a
-            v-if="item.link"
-            class="btn btn-sm btn-outline-secondary"
-            :href="item.link"
-            target="_blank"
-            rel="noopener"
-        >
-            Learn more →
-        </a>
-        <span v-else class="text-muted small">Demo content</span>
+    <!-- rating -->
+    <footer
+      class="card-footer bg-white py-2 rating-footer"
+      aria-label="Article rating section"
+    >
+      <div class="d-flex justify-content-between align-items-center">
+        <p class="text-muted small mb-0" aria-hidden="true">Rate</p>
+        <RatingStars :item-id="item.id" aria-label="Star rating control" />
+      </div>
+    </footer>
 
-        <button
-            class="btn btn-sm"
-            :class="isSaved ? 'btn-danger' : 'btn-outline-danger'"
-            :disabled="toggling"
-            @click="toggleSave"
-            :title="isSaved ? 'Unsave' : 'Save'"
-        >
-            <span v-if="isSaved">♥</span>
-            <span v-else>♡</span>
-        </button>
-    </div>
-  </div>
+    <!-- button area -->
+    <footer
+      class="card-footer bg-white d-flex justify-content-between align-items-center action-footer"
+      aria-label="Article actions"
+    >
+      <a
+        v-if="item.link"
+        class="btn btn-sm btn-outline-secondary"
+        :href="item.link"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Learn more about this article (opens in new tab)"
+      >
+        Learn more →
+      </a>
+      <span
+        v-else
+        class="text-muted small"
+        aria-label="Placeholder content not linked"
+      >
+        Demo content
+      </span>
+
+      <!-- saving -->
+      <button
+        class="btn btn-sm"
+        :class="isSaved ? 'btn-danger' : 'btn-outline-danger'"
+        :disabled="toggling"
+        @click="toggleSave"
+        :aria-pressed="isSaved"
+        :aria-label="isSaved ? 'Remove from saved articles' : 'Save this article'"
+      >
+        <span v-if="isSaved" aria-hidden="true">♥</span>
+        <span v-else aria-hidden="true">♡</span>
+      </button>
+    </footer>
+  </article>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'

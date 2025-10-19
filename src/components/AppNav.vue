@@ -1,8 +1,8 @@
 <template>
-  <nav class="navbar navbar-expand-lg bg-light">
+  <nav class="navbar navbar-expand-lg bg-light" role="navigation" aria-label="Main navigation">
     <div class="container">
       <!-- Brand -->
-      <a class="navbar-brand" href="#" @click.prevent="$router.push('/')">
+      <a class="navbar-brand" href="/" @click.prevent="$router.push('/')" aria-label="Go to home page">
         Men's Health
       </a>
 
@@ -21,10 +21,17 @@
         <!-- logged in -->
         <template v-else>
           <div class="dropdown">
-            <button class="avatar-btn" data-bs-toggle="dropdown" aria-expanded="false" :title="currentUser.name">
+            <button
+              class="avatar-btn"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+              :title="currentUser.name"
+              aria-haspopup="true"
+              aria-controls="user-menu"
+            >
               {{ initials(currentUser.name) }}
             </button>
-            <ul class="dropdown-menu dropdown-menu-end">
+            <ul id="user-menu" class="dropdown-menu dropdown-menu-end" role="menu">
               <li class="dropdown-item-text small text-muted">Hi, {{ currentUser.name }}</li>
               <li><hr class="dropdown-divider" /></li>
               <!--  Profile entry -->
@@ -135,15 +142,73 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.nav-link { padding-left: 1rem; padding-right: 1rem; }
+.navbar {
+  background-color: #000 !important;
+  padding: 0.75rem 1rem;
+}
 
-/* circular avatar placeholder */
-.avatar-btn{
-  width: 40px; height: 40px;
+.nav-link {
+  color: #fff !important;
+  font-weight: 600;
+  margin-right: 1rem;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover,
+.navbar-brand:hover {
+  color: #ffcc00 !important; /* when hover turn yellow */
+}
+
+/* brand */
+.navbar-brand {
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* login button */
+.btn-outline-light {
+  border: 1px solid #fff;
+  color: #fff;
+  font-weight: 600;
+}
+.btn-outline-light:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+/* circle profile pic */
+.avatar-btn {
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  border: 0;
-  background: #e9ecef;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-weight: 700; letter-spacing: .5px;
+  border: 2px solid #fff;
+  background: #222;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* dropdown menu */
+.dropdown-menu {
+  background-color: #111 !important; 
+  border: 1px solid #333;
+}
+
+.dropdown-item {
+  color: #fff !important;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #222 !important;
+  color: #ffcc00 !important; 
+}
+
+.dropdown-divider {
+  border-color: #333 !important;
 }
 </style>

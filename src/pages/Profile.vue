@@ -1,12 +1,17 @@
 <template>
-  <div class="container py-4" style="max-width:640px">
-    <h2 class="h4 mb-3">My Profile</h2>
+  <main class="container py-4" style="max-width:640px" role="main" aria-labelledby="page-title">
+    <h1 id="page-title" class="h4 mb-3">My Profile</h1>
 
     <!-- loading -->
-    <div v-if="loading" class="text-muted">Loading...</div>
+    <div v-if="loading" class="text-muted" role="status" aria-live="polite">Loading...</div>
 
     <!-- form -->
-    <form v-if="uid && !loading" @submit.prevent="save" novalidate>
+    <form
+      v-if="uid && !loading"
+      @submit.prevent="save"
+      novalidate
+      aria-label="Profile edit form"
+    >
       <div class="row g-3">
         <!-- Name -->
         <div class="col-12">
@@ -19,44 +24,72 @@
             placeholder="Your display name"
             @blur="validateName(true)"
             @input="validateName(false)"
+            aria-describedby="nameHelp"
+            required
           />
-          <div v-if="errors.name" class="text-danger small">{{ errors.name }}</div>
+          <small id="nameHelp" class="visually-hidden">Enter your display name</small>
+          <div v-if="errors.name" class="text-danger small" role="alert">
+            {{ errors.name }}
+          </div>
         </div>
 
         <!-- Email（Read only） -->
         <div class="col-12">
           <label class="form-label" for="email">Email</label>
-          <input id="email" v-model="email" class="form-control" type="email" readonly />
-          <div class="form-text">Email comes from Firebase Auth and is read-only.</div>
+          <input
+            id="email"
+            v-model="email"
+            class="form-control"
+            type="email"
+            readonly
+            aria-readonly="true"
+            aria-describedby="emailHelp"
+          />
+          <div id="emailHelp" class="form-text">
+            Email comes from Firebase Auth and is read-only.
+          </div>
         </div>
 
         <!-- Pronoun -->
         <div class="col-12">
           <label class="form-label" for="pronoun">Pronoun</label>
-          <select id="pronoun" v-model="pronoun" class="form-select">
+          <select
+            id="pronoun"
+            v-model="pronoun"
+            class="form-select"
+            aria-label="Select your pronoun"
+          >
             <option v-for="opt in pronounOptions" :key="opt" :value="opt">{{ opt }}</option>
           </select>
           <div class="form-text">Please choose one option.</div>
         </div>
 
         <div class="col-12">
-          <div v-if="formError" class="text-danger small mb-2">{{ formError }}</div>
-          <div v-if="formOk" class="text-success small mb-2">{{ formOk }}</div>
+          <div v-if="formError" class="text-danger small mb-2" role="alert">
+            {{ formError }}
+          </div>
+          <div v-if="formOk" class="text-success small mb-2" role="status">
+            {{ formOk }}
+          </div>
 
-          <button class="btn btn-primary" :disabled="saving">Save changes</button>
+          <button class="btn btn-primary" :disabled="saving" aria-label="Save profile changes">
+            Save changes
+          </button>
           <button
             class="btn btn-outline-secondary ms-2"
             type="button"
             :disabled="saving"
             @click="resetForm"
+            aria-label="Reset profile form"
           >
             Reset
           </button>
         </div>
       </div>
     </form>
-  </div>
+  </main>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue'
@@ -179,7 +212,6 @@ onMounted(() => {
         loading.value = false
       }
     })
-
     // Clean up listeners when components are unmounted to prevent memory leaks and TypeScript warnings
     onUnmounted(() => {
       unsub()

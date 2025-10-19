@@ -1,77 +1,99 @@
 <template>
-    <div class="container py-4" style="max-width:560px">
-        <h2 class="h4 mb-3">Register</h2>
-        <form @submit.prevent="onSubmit" novalidate>
-        <div class="row g-3">
-            <!-- Name -->
-            <div class="col-12 col-md-6">
-            <label class="form-label" for="name">Name</label>
-            <input id="name"
-                    v-model.trim="name"
-                    class="form-control"
-                    @blur="validateName(true)"
-                    @input="validateName(false)" />
-            <div v-if="errors.name" class="text-danger small">{{ errors.name }}</div>
-            </div>
+  <main class="container py-4" style="max-width:560px" role="main" aria-labelledby="page-title">
+    <h1 id="page-title" class="h4 mb-3">Register</h1>
 
-            <!-- Email -->
-            <div class="col-12 col-md-6">
-            <label class="form-label" for="email">Email</label>
-            <input id="email"
-                    v-model.trim="email"
-                    type="email"
-                    class="form-control"
-                    placeholder="name@example.com"
-                    @blur="validateEmail(true)"
-                    @input="validateEmail(false)" />
-            <div v-if="errors.email" class="text-danger small">{{ errors.email }}</div>
-            </div>
-
-            <!-- Password -->
-            <div class="col-12 col-md-6">
-            <label class="form-label" for="password">Password</label>
-            <input id="password"
-                    v-model="password"
-                    type="password"
-                    class="form-control"
-                    @blur="validatePassword(true)"
-                    @input="validatePassword(false)" />
-            <div v-if="errors.password" class="text-danger small">{{ errors.password }}</div>
-            </div>
-
-            <!-- Pronoun (optional) -->
-            <div class="col-12 col-md-6">
-            <label class="form-label" for="pronoun">Pronoun (optional)</label>
-            <select id="pronoun" v-model="pronoun" class="form-select">
-                <option value="">Prefer not to say</option>
-                <option value="he/him">He / Him</option>
-                <option value="she/her">She / Her</option>
-                <option value="they/them">They / Them</option>
-            </select>
-            </div>
-
-            <!-- Form-level error -->
-            <div class="col-12">
-            <div v-if="formError" class="text-danger small">{{ formError }}</div>
-            </div>
-
-            <!-- Submit -->
-            <div class="col-12">
-            <button class="btn btn-primary w-100">Create Account</button>
-            </div>
-
-            <!-- User list -->
-            <div v-if="users.length" class="mt-4">
-            <h5>Registered Users</h5>
-            <DataTable :value="users" tableStyle="min-width: 20rem">
-                <Column field="name" header="Name" />
-                <Column field="email" header="Email" />
-                <Column field="pronoun" header="Pronoun" />
-            </DataTable>
-            </div>
+    <form @submit.prevent="onSubmit" novalidate aria-label="Registration form">
+      <div class="row g-3">
+        <!-- Name -->
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="name">Name</label>
+          <input
+            id="name"
+            v-model.trim="name"
+            class="form-control"
+            @blur="validateName(true)"
+            @input="validateName(false)"
+            aria-describedby="nameHelp"
+            required
+          />
+          <small id="nameHelp" class="visually-hidden">Enter your full name</small>
+          <div v-if="errors.name" class="text-danger small">{{ errors.name }}</div>
         </div>
-        </form>
-    </div>
+
+        <!-- Email -->
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="email">Email</label>
+          <input
+            id="email"
+            v-model.trim="email"
+            type="email"
+            class="form-control"
+            placeholder="name@example.com"
+            @blur="validateEmail(true)"
+            @input="validateEmail(false)"
+            aria-describedby="emailHelp"
+            required
+          />
+          <small id="emailHelp" class="visually-hidden">Enter a valid email address</small>
+          <div v-if="errors.email" class="text-danger small">{{ errors.email }}</div>
+        </div>
+
+        <!-- Password -->
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="password">Password</label>
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            class="form-control"
+            @blur="validatePassword(true)"
+            @input="validatePassword(false)"
+            aria-describedby="passwordHelp"
+            required
+          />
+          <small id="passwordHelp" class="visually-hidden">Enter a secure password, at least 6 characters</small>
+          <div v-if="errors.password" class="text-danger small">{{ errors.password }}</div>
+        </div>
+
+        <!-- Pronoun (optional) -->
+        <div class="col-12 col-md-6">
+          <label class="form-label" for="pronoun">Pronoun (optional)</label>
+          <select id="pronoun" v-model="pronoun" class="form-select" aria-label="Select your pronoun">
+            <option value="">Prefer not to say</option>
+            <option value="he/him">He / Him</option>
+            <option value="she/her">She / Her</option>
+            <option value="they/them">They / Them</option>
+          </select>
+        </div>
+
+        <!-- Form-level error -->
+        <div class="col-12">
+          <div v-if="formError" class="text-danger small" role="alert">
+            {{ formError }}
+          </div>
+        </div>
+        <!-- Submit -->
+        <div class="col-12">
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            aria-label="Create your account"
+          >
+            Create Account
+          </button>
+        </div>
+        <!-- User list -->
+        <div v-if="users.length" class="mt-4" aria-live="polite">
+          <h2 class="h5">Registered Users</h2>
+          <DataTable :value="users" tableStyle="min-width: 20rem" aria-label="Registered users table">
+            <Column field="name" header="Name" />
+            <Column field="email" header="Email" />
+            <Column field="pronoun" header="Pronoun" />
+          </DataTable>
+        </div>
+      </div>
+    </form>
+  </main>
 </template>
 
 <script setup lang="ts">

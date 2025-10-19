@@ -1,44 +1,89 @@
 <template>
-  <section class="container py-4">
-    <h2 class="mb-3">Physical Health</h2>
-    <div class="alert alert-info">
+  <main class="container py-4" role="main" aria-labelledby="page-title">
+    <h1 id="page-title" class="mb-3">Physical Health</h1>
+    <div
+      class="alert alert-info"
+      role="status"
+      aria-live="polite"
+    >
       Need help? Enter your address below and we'll find the nearest hospital and provide directions.
     </div>
 
     <div class="row g-2 align-items-center mb-3" style="max-width: 680px">
       <div class="col">
-        <input v-model="address" class="form-control" placeholder="For example：305 Grattan St, Carlton VIC" />
+        <label for="address" class="visually-hidden">Enter your address</label>
+        <input
+          id="address"
+          v-model="address"
+          class="form-control"
+          type="text"
+          placeholder="For example: 305 Grattan St, Carlton VIC"
+          aria-label="Enter your address to find nearby hospitals"
+        />
       </div>
       <div class="col-auto">
-        <button class="btn btn-primary" @click="findHospitals" :disabled="loading">
+        <button
+          class="btn btn-primary"
+          @click="findHospitals"
+          :disabled="loading"
+          aria-label="Search for nearby hospitals"
+        >
           {{ loading ? 'Searching…' : 'Find nearby hospitals' }}
         </button>
       </div>
       <div class="col-auto">
-        <button class="btn btn-outline-secondary" @click="locateMe" :disabled="loading">Use Current Location</button>
+        <button
+          class="btn btn-outline-secondary"
+          @click="locateMe"
+          :disabled="loading"
+          aria-label="Use your current location"
+        >
+          Use Current Location
+        </button>
       </div>
     </div>
 
-    <div id="map" style="height: 520px; width: 100%; border-radius: 10px"></div>
+    <div
+      id="map"
+      style="height: 520px; width: 100%; border-radius: 10px"
+      role="region"
+      aria-label="Map showing nearby hospitals"
+    ></div>
 
     <div v-if="results.length" class="mt-3" style="max-width: 680px">
-      <h5 class="mb-2">Nearby hospitals (sorted by distance)</h5>
-      <ul class="list-group">
-        <li class="list-group-item d-flex justify-content-between align-items-center" v-for="(r) in results" :key="r.id">
+      <h2 class="h5 mb-2" id="hospital-list-heading">Nearby hospitals (sorted by distance)</h2>
+      <ul
+        class="list-group"
+        role="list"
+        aria-labelledby="hospital-list-heading"
+      >
+        <li
+          class="list-group-item d-flex justify-content-between align-items-center"
+          v-for="(r) in results"
+          :key="r.id"
+          role="listitem"
+        >
           <div>
-            <div>
-                <strong>{{ r.tags?.name || "Unnamed Hospital" }}</strong>
-                <div class="text-muted small">Distance: {{ (r._dist / 1000).toFixed(2) }} km</div>
-                </div>
+            <strong>{{ r.tags?.name || "Unnamed Hospital" }}</strong>
+            <div class="text-muted small">
+              Distance: {{ (r._dist / 1000).toFixed(2) }} km
             </div>
+          </div>
           <div class="d-flex gap-2">
-            <button class="btn btn-sm btn-success" @click="navigateTo([r.lon, r.lat])">NavigateTo</button>
+            <button
+              class="btn btn-sm btn-success"
+              @click="navigateTo([r.lon, r.lat])"
+              aria-label="Navigate to {{ r.tags?.name || 'this hospital' }}"
+            >
+              NavigateTo
+            </button>
           </div>
         </li>
       </ul>
     </div>
-  </section>
+  </main>
 </template>
+
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
@@ -223,3 +268,91 @@ map.addLayer({
   map.fitBounds(bounds, { padding: 50 });
 }
 </script>
+
+<style scoped>
+/* alert */
+.alert-info {
+  background-color: #fff8e1; 
+  border: 1px solid #f4b400;
+  color: #6a4f00;
+  font-weight: 500;
+}
+
+.form-control {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: #f4b400;
+  box-shadow: 0 0 0 0.15rem rgba(244, 180, 0, 0.25);
+}
+
+/* Find nearby hospitals */
+.btn-primary {
+  background-color: #f4b400 !important;
+  border-color: #f4b400 !important;
+  color: #000;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background-color: #d9a300 !important;
+  border-color: #d9a300 !important;
+  color: #fff;
+}
+
+/* Use Current Location */
+.btn-outline-secondary {
+  border-color: #777;
+  color: #333;
+  font-weight: 500;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #e0e0e0;
+  color: #000;
+  border-color: #555;
+}
+
+/*  NavigateTo*/
+.btn-success {
+  background-color: #4caf50 !important;
+  border-color: #4caf50 !important;
+  font-weight: 600;
+}
+
+.btn-success:hover {
+  background-color: #43a047 !important;
+  border-color: #388e3c !important;
+}
+
+/* hospital list */
+.list-group-item {
+  border-radius: 8px;
+  margin-bottom: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #fffbea;
+}
+
+/* Map */
+#map {
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsive optimization */
+@media (max-width: 768px) {
+  main {
+    padding: 1.5rem;
+  }
+  #map {
+    height: 400px;
+  }
+}
+
+</style>

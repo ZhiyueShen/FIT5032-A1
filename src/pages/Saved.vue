@@ -1,39 +1,77 @@
 <template>
-    <!-- Page wrapper -->
-  <div class="container py-4" style="max-width: 900px">
-    <h2 class="h4 mb-3">Saved</h2>
-
-    <div v-if="!uid" class="alert alert-warning">
+  <main class="container py-4" style="max-width: 900px" role="main" aria-labelledby="page-title">
+    <h1 id="page-title" class="h4 mb-3">Saved</h1>
+    <div
+      v-if="!uid"
+      class="alert alert-warning"
+      role="alert"
+      aria-live="assertive"
+    >
       Please login to view your saved content.
     </div>
-
-        <!-- Handle loading, empty and list states -->
     <div v-else>
-      <div v-if="loading" class="text-muted">Loading...</div>
-
-      <div v-else-if="items.length === 0" class="text-muted">No saved items yet.</div>
-
-      <div v-else class="row g-3">
-        <div class="col-12 col-md-6 col-lg-4" v-for="it in items" :key="it.id">
+      <div
+        v-if="loading"
+        class="text-muted"
+        role="status"
+        aria-live="polite"
+      >
+        Loading...
+      </div>
+      <div
+        v-else-if="items.length === 0"
+        class="text-muted"
+        role="status"
+        aria-live="polite"
+      >
+        No saved items yet.
+      </div>
+      <!-- card area -->
+      <div v-else class="row g-3" role="list" aria-label="Saved items list">
+        <div
+          class="col-12 col-md-6 col-lg-4"
+          v-for="it in items"
+          :key="it.id"
+          role="listitem"
+        >
           <div class="card h-100 shadow-sm">
-            <img v-if="it.image" :src="it.image" class="card-img-top" :alt="it.title" />
+            <img
+              v-if="it.image"
+              :src="it.image"
+              class="card-img-top"
+              :alt="it.title || 'Saved item image'"
+            />
             <div class="card-body">
-              <h5 class="card-title">{{ it.title }}</h5>
+              <h2 class="card-title h6">{{ it.title }}</h2>
               <p class="card-text text-muted">{{ it.summary }}</p>
             </div>
             <div class="card-footer bg-white d-flex justify-content-between">
-              <a v-if="it.link" class="btn btn-sm btn-outline-secondary" :href="it.link" target="_blank">Open</a>
-              <button class="btn btn-sm btn-outline-danger" @click="remove(it.id)" :disabled="removingId===it.id">
+              <a
+                v-if="it.link"
+                class="btn btn-sm btn-outline-secondary"
+                :href="it.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Open {{ it.title }}"
+              >
+                Open
+              </a>
+              <button
+                class="btn btn-sm btn-outline-danger"
+                @click="remove(it.id)"
+                :disabled="removingId === it.id"
+                aria-label="Remove {{ it.title }} from saved list"
+              >
                 Remove
               </button>
             </div>
           </div>
         </div>
       </div>
-
     </div>
-  </div>
+  </main>
 </template>
+
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
@@ -94,7 +132,6 @@ async function remove(id: string) {
   removingId.value = ''
 }
 
-/** Remember the uid and load data */
 onMounted(() => {
   onAuthStateChanged(getAuth(), (u) => {
     uid.value = u?.uid ?? null

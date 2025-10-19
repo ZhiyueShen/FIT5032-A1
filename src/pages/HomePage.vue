@@ -39,9 +39,12 @@ async function loadArticles() {
     .filter(a => a.visible === true); 
 }
 
-const searchQuery = ref(""); // ✅ 新增搜索输入内容
 
-// ✅ 计算过滤后的文章
+
+//Search function
+const searchQuery = ref(""); 
+
+// Filtered Articles
 const filteredArticles = computed(() => {
   if (!searchQuery.value) return visibleArticles.value;
   const q = searchQuery.value.toLowerCase();
@@ -57,19 +60,20 @@ onMounted(loadArticles);
 </script>
 
 <template>
-  <section class="container my-5">
+  <main class="container my-5" role="main" aria-labelledby="article-heading">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="h4 mb-0">Article</h2>
+      <h1 id="article-heading" class="h4 mb-0">Articles</h1>
       <button
         class="btn btn-outline-primary btn-sm"
         @click="showTable = !showTable"
+        aria-label="Toggle between card view and article table view"
       >
         {{ showTable ? 'Hide Table' : 'More Articles →' }}
       </button>
     </div>
 
     <!-- Article Card -->
-    <div v-if="!showTable">
+    <section v-if="!showTable" aria-label="Featured Articles">
       <div class="row g-3">
         <div
           class="col-12 col-md-6 col-lg-3"
@@ -79,18 +83,26 @@ onMounted(loadArticles);
           <ArticleCard :item="a" />
         </div>
       </div>
-    </div>
+    </section>
 
     <!-- Article Table -->
-    <div v-else class="mt-4">
+    <section v-else class="mt-4" aria-label="All Articles Table">
       <div class="flex justify-center mb-4">
+        <label for="article-search" class="visually-hidden">
+          Search articles
+        </label>
         <input
+          id="article-search"
           v-model="searchQuery"
           type="text"
           placeholder="Search by title or author..."
           class="w-full max-w-[400px] px-3 py-2 border border-gray-300 rounded-md 
-                focus:outline-none focus:ring-2 focus:ring-gray-400 transition"
+                focus:outline-none focus:ring-2 focus:ring-primary transition"
+          aria-describedby="search-help"
         />
+        <small id="search-help" class="text-muted visually-hidden">
+          Type keywords to filter the articles table by title or author
+        </small>
       </div>
       <DataTable
         :value="filteredArticles"
@@ -99,14 +111,38 @@ onMounted(loadArticles);
         showGridlines
         stripedRows
         class="w-100"
+        aria-label="Article data table"
       >
-        <Column field="title" header="Title" />
-        <Column field="category" header="Category" />
-        <Column field="author" header="Author" />
-        <Column field="publish_date" header="Publish Date" />
-        <Column field="views" header="Views" />
+        <Column field="title" header="Title" sortable />
+        <Column field="category" header="Category" sortable />
+        <Column field="author" header="Author" sortable />
+        <Column field="publish_date" header="Publish Date" sortable />
+        <Column field="views" header="Views" sortable />
       </DataTable>
-    </div>
-  </section>
+    </section>
+  </main>
 </template>
 
+<style scoped>
+#article-heading {
+  font-weight: 800;       
+  color: #222;   
+  letter-spacing: 0.5px;   
+}
+
+.btn-outline-primary.btn-sm {
+  border: 2px solid #000; 
+  color: #000;      
+  font-weight: 600;      
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-outline-primary.btn-sm:hover {
+  background-color: #ffcc00; 
+  color: #000;      
+  border-color: #ffcc00;   
+  transform: translateY(-2px); 
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+</style>

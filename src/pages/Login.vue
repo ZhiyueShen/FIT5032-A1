@@ -1,47 +1,70 @@
 <template>
-  <div class="container py-4" style="max-width:560px">
-    <h2 class="h4 mb-3">Login</h2>
+  <main class="container py-4" style="max-width:560px" role="main" aria-labelledby="page-title">
+    <h1 id="page-title" class="h4 mb-3">Login</h1>
 
-    <form @submit.prevent="onSubmit" novalidate>
+    <form @submit.prevent="onSubmit" novalidate aria-label="Login form">
       <div class="row g-3">
         <!-- Email -->
         <div class="col-12">
           <label class="form-label" for="email">Email</label>
-          <input id="email"
-                 v-model.trim="email"
-                 type="email"
-                 class="form-control"
-                 placeholder="name@example.com"
-                 @blur="validateEmail(true)"
-                 @input="validateEmail(false)" />
-          <div v-if="errors.email" class="text-danger small">{{ errors.email }}</div>
+          <input
+            id="email"
+            v-model.trim="email"
+            type="email"
+            class="form-control"
+            placeholder="name@example.com"
+            @blur="validateEmail(true)"
+            @input="validateEmail(false)"
+            aria-describedby="emailHelp"
+            required
+          />
+          <small id="emailHelp" class="visually-hidden">Enter your registered email address</small>
+          <div v-if="errors.email" class="text-danger small" role="alert">
+            {{ errors.email }}
+          </div>
         </div>
 
         <!-- Password -->
         <div class="col-12">
           <label class="form-label" for="password">Password</label>
-          <input id="password"
-                 v-model="password"
-                 type="password"
-                 class="form-control"
-                 placeholder="Your password"
-                 @blur="validatePassword(true)"
-                 @input="validatePassword(false)" />
-          <div v-if="errors.password" class="text-danger small">{{ errors.password }}</div>
+          <input
+            id="password"
+            v-model="password"
+            type="password"
+            class="form-control"
+            placeholder="Your password"
+            @blur="validatePassword(true)"
+            @input="validatePassword(false)"
+            aria-describedby="passwordHelp"
+            required
+          />
+          <small id="passwordHelp" class="visually-hidden">Enter your account password</small>
+          <div v-if="errors.password" class="text-danger small" role="alert">
+            {{ errors.password }}
+          </div>
         </div>
 
         <!-- Form-level error -->
         <div class="col-12">
-          <div v-if="formError" class="text-danger small">{{ formError }}</div>
+          <div v-if="formError" class="text-danger small" role="alert">
+            {{ formError }}
+          </div>
         </div>
 
         <div class="col-12">
-          <button class="btn btn-primary w-100">Login</button>
+          <button
+            class="btn btn-primary w-100"
+            type="submit"
+            aria-label="Login to your account"
+          >
+            Login
+          </button>
         </div>
       </div>
     </form>
-  </div>
+  </main>
 </template>
+
 
 <script setup lang="ts">
 import { ref } from 'vue'
