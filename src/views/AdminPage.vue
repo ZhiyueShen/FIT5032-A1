@@ -130,11 +130,11 @@
             stripedRows
             class="w-100"
           >
-            <Column field="id" header="ID" />
-            <Column field="name" header="Name" />
-            <Column field="email" header="Email" />
-            <Column field="role" header="Role" />
-            <Column field="pronoun" header="Pronoun" />
+            <Column field="id" header="ID" sortable/>
+            <Column field="name" header="Name" sortable/>
+            <Column field="email" header="Email" sortable/>
+            <Column field="role" header="Role" sortable/>
+            <Column field="pronoun" header="Pronoun" sortable/>
           </DataTable>
         </section>
 
@@ -148,12 +148,12 @@
             stripedRows
             class="w-100"
           >
-            <Column field="id" header="ID" />
-            <Column field="title" header="Title" />
-            <Column field="category" header="Category" />
-            <Column field="author" header="Author" />
-            <Column field="publish_date" header="Publish Date" />
-            <Column field="views" header="Views" />
+            <Column field="id" header="ID" sortable/>
+            <Column field="title" header="Title" sortable/>
+            <Column field="category" header="Category" sortable/>
+            <Column field="author" header="Author" sortable/>
+            <Column field="publish_date" header="Publish Date" sortable/>
+            <Column field="views" header="Views" sortable/>
             <Column header="Visible">
               <template #body="slotProps">
                 <button
@@ -171,7 +171,6 @@
     </div>
   </div>
 </template>
-
 
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
